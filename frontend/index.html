@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Plataforma de Banca en Línea SouthPark Bank - Entorno Académico">
+  <title>SouthPark Bank | Banca en Línea Segura</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ENCABEZADO INSTITUCIONAL -->
+  <header class="app-header" role="banner">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21h18"></path>
+            <path d="M3 10h18"></path>
+            <path d="M5 6l7-3 7 3"></path>
+            <path d="M4 10v11"></path>
+            <path d="M20 10v11"></path>
+            <path d="M8 14v4"></path>
+            <path d="M12 14v4"></path>
+            <path d="M16 14v4"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">SouthPark Bank</span>
+          <span class="brand-tagline">Banca Digital Segura</span>
+        </div>
+      </div>
+
+      <!-- ESTADO DE SESIÓN DE USUARIO (Visible tras iniciar sesión) -->
+      <div id="user-session" class="user-session hidden" aria-live="polite">
+        <div class="user-avatar" aria-hidden="true">IA</div>
+        <div class="user-info">
+          <span class="user-name" id="session-user-name">Isaias Arancibia</span>
+          <span class="user-rut" id="session-user-rut">RUT: 12.345.678-5</span>
+        </div>
+        <button id="btn-logout" class="btn btn-outline-light" type="button" aria-label="Cerrar sesión actual">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVEGACIÓN PRINCIPAL (Visible tras iniciar sesión) -->
+  <nav id="main-nav" class="main-nav hidden" aria-label="Menú principal de banca en línea">
+    <div class="nav-container">
+      <ul class="nav-tabs" role="tablist">
+        <li role="presentation">
+          <button id="tab-summary" class="nav-tab active" role="tab" aria-selected="true" aria-controls="view-summary" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+            <span>Resumen de Cuenta</span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button id="tab-transfer" class="nav-tab" role="tab" aria-selected="false" aria-controls="view-transfer" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            <span>Transferencias</span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button id="tab-currency" class="nav-tab" role="tab" aria-selected="false" aria-controls="view-currency" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            <span>Divisas y Dólar</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- CONTENEDOR PRINCIPAL DE PANTALLAS -->
+  <main class="main-content" id="main-content" role="main">
+
+    <!-- ===================================================================== -->
+    <!-- PANTALLA 1: INICIO DE SESIÓN -->
+    <!-- ===================================================================== -->
+    <section id="view-login" class="view-panel active" aria-labelledby="login-title">
+      <div class="login-card-wrapper">
+        <div class="login-card">
+          <div class="login-header">
+            <div class="login-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <h1 id="login-title">Acceso a Banca en Línea</h1>
+            <p class="login-subtitle">Ingrese su RUT y contraseña para operar de forma segura.</p>
+          </div>
+
+          <!-- BANNER DE ALERTA GLOBAL (Para errores de autenticación o bloqueo) -->
+          <div id="login-alert" class="alert alert-danger hidden" role="alert" aria-live="assertive">
+            <span class="alert-icon" aria-hidden="true">⚠️</span>
+            <span class="alert-message" id="login-alert-text"></span>
+          </div>
+
+          <form id="form-login" class="form-flow" novalidate>
+            <!-- CAMPO RUT -->
+            <div class="form-group">
+              <label for="login-rut" class="form-label">
+                RUT del Titular <span class="required" aria-hidden="true">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  id="login-rut"
+                  name="rut"
+                  class="form-control"
+                  placeholder="Ej: 12.345.678-5 o 12345678-5"
+                  maxlength="12"
+                  autocomplete="username"
+                  inputmode="text"
+                  aria-required="true"
+                  aria-describedby="login-rut-hint login-rut-error"
+                >
+                <span class="input-icon" aria-hidden="true">🪪</span>
+              </div>
+              <span id="login-rut-hint" class="field-hint">Formato con o sin puntos, con guion y dígito verificador.</span>
+              <span id="login-rut-error" class="field-error" role="alert" aria-live="polite"></span>
+            </div>
+
+            <!-- CAMPO CLAVE -->
+            <div class="form-group">
+              <label for="login-password" class="form-label">
+                Clave Secreta <span class="required" aria-hidden="true">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input
+                  type="password"
+                  id="login-password"
+                  name="password"
+                  class="form-control"
+                  placeholder="Mínimo 6 caracteres"
+                  maxlength="20"
+                  autocomplete="current-password"
+                  aria-required="true"
+                  aria-describedby="login-password-hint login-password-error"
+                >
+                <button
+                  type="button"
+                  id="btn-toggle-password"
+                  class="btn-icon"
+                  aria-label="Mostrar u ocultar clave"
+                  title="Mostrar clave"
+                >
+                  <span id="toggle-password-icon" aria-hidden="true">👁️</span>
+                </button>
+              </div>
+              <span id="login-password-hint" class="field-hint">Clave numérica o alfanumérica de al menos 6 dígitos.</span>
+              <span id="login-password-error" class="field-error" role="alert" aria-live="polite"></span>
+            </div>
+
+            <!-- BOTÓN ENVIAR -->
+            <button type="submit" id="btn-submit-login" class="btn btn-primary btn-block">
+              <span class="btn-spinner hidden" id="login-spinner" aria-hidden="true"></span>
+              <span id="login-btn-text">Ingresar a mi Cuenta</span>
+            </button>
+          </form>
+
+          <!-- AVISO DE DATOS FALSOS / ACADÉMICO -->
+          <aside class="demo-box" aria-label="Información de prueba">
+            <div class="demo-badge">ENTORNO DEMO ACADÉMICO</div>
+            <p><strong>RUT de prueba:</strong> <code>12.345.678-5</code></p>
+            <p><strong>Clave de prueba:</strong> <code>123456</code></p>
+            <small class="demo-disclaimer">* Los datos presentados son estrictamente ficticios y con fines educativos.</small>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- PANTALLA 2: RESUMEN DE CUENTA -->
+    <!-- ===================================================================== -->
+    <section id="view-summary" class="view-panel" aria-labelledby="summary-title" hidden>
+      <div class="dashboard-header">
+        <div>
+          <h1 id="summary-title" class="section-title">Resumen de Cuentas</h1>
+          <p class="section-subtitle">Consulte su saldo disponible y el historial detallado de movimientos.</p>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="btn btn-primary" id="btn-quick-transfer">
+            <span>💸 Nueva Transferencia</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TARJETAS DE PRODUCTOS FINANCIEROS -->
+      <div class="cards-grid">
+        <!-- CUENTA CORRIENTE -->
+        <article class="account-card" aria-labelledby="card-cc-title">
+          <div class="card-top">
+            <span class="account-type-badge">Cuenta Corriente</span>
+            <span class="account-number" id="cc-number">N° CC-1001-9874</span>
+          </div>
+          <div class="card-balance-block">
+            <span class="balance-label">Saldo Disponible Real</span>
+            <span class="balance-amount" id="cc-balance">$ 1.450.000 <small>CLP</small></span>
+          </div>
+          <div class="card-details-row">
+            <div class="detail-item">
+              <span class="detail-label">Línea de Sobregiro</span>
+              <span class="detail-value" id="cc-overdraft">$ 300.000 CLP</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Cupo Total Combinado</span>
+              <span class="detail-value highlight" id="cc-total-available">$ 1.750.000 CLP</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- CUENTA DE AHORRO -->
+        <article class="account-card account-card-secondary" aria-labelledby="card-ca-title">
+          <div class="card-top">
+            <span class="account-type-badge badge-secondary">Cuenta de Ahorro</span>
+            <span class="account-number">N° CA-2001-4412</span>
+          </div>
+          <div class="card-balance-block">
+            <span class="balance-label">Saldo en Ahorro</span>
+            <span class="balance-amount">$ 500.000 <small>CLP</small></span>
+          </div>
+          <div class="card-details-row">
+            <div class="detail-item">
+              <span class="detail-label">Tasa Anual</span>
+              <span class="detail-value">4.5% + Reajuste UF</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Estado</span>
+              <span class="detail-value text-success">● Activa</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- TABLA DE ÚLTIMOS MOVIMIENTOS -->
+      <div class="table-card">
+        <div class="table-header-bar">
+          <div>
+            <h2 class="table-title">Últimos Movimientos</h2>
+            <p class="table-subtitle">Transacciones registradas en su Cuenta Corriente</p>
+          </div>
+          <div class="table-filters">
+            <label for="filter-movement-type" class="sr-only">Filtrar movimientos por tipo</label>
+            <select id="filter-movement-type" class="form-control form-control-sm">
+              <option value="ALL">Todos los movimientos</option>
+              <option value="ABONO">Solo Abonos (+)</option>
+              <option value="CARGO">Solo Cargos (-)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table" id="movements-table">
+            <caption class="sr-only">Historial de movimientos bancarios recientes</caption>
+            <thead>
+              <tr>
+                <th scope="col">Fecha / Hora</th>
+                <th scope="col">Descripción / Destino</th>
+                <th scope="col">Tipo</th>
+                <th scope="col" class="text-right">Monto</th>
+                <th scope="col" class="text-right">Saldo Posterior</th>
+              </tr>
+            </thead>
+            <tbody id="movements-tbody">
+              <!-- Se inyecta dinámicamente vía app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- PANTALLA 3: TRANSFERENCIA BANCARIA -->
+    <!-- ===================================================================== -->
+    <section id="view-transfer" class="view-panel" aria-labelledby="transfer-title" hidden>
+      <div class="form-page-wrapper">
+        <div class="page-header">
+          <h1 id="transfer-title" class="section-title">Transferencia de Fondos</h1>
+          <p class="section-subtitle">Transfiera de forma rápida y segura a cuentas propias o de terceros sin costo.</p>
+        </div>
+
+        <!-- FORMULARIO DE TRANSFERENCIA -->
+        <div class="card form-card">
+          <form id="form-transfer" class="form-flow" novalidate>
+
+            <!-- CUENTA ORIGEN -->
+            <div class="form-group">
+              <label for="transfer-source" class="form-label">
+                Cuenta de Origen <span class="required" aria-hidden="true">*</span>
+              </label>
+              <select id="transfer-source" name="source" class="form-control" aria-required="true">
+                <option value="CC-1001-9874" selected>Cuenta Corriente N° CC-1001-9874 (Disponible: $1.450.000 CLP)</option>
+                <option value="CA-2001-4412">Cuenta de Ahorro N° CA-2001-4412 (Disponible: $500.000 CLP)</option>
+              </select>
+            </div>
+
+            <fieldset class="form-fieldset">
+              <legend class="fieldset-legend">Datos del Destinatario</legend>
+
+              <div class="form-grid-2">
+                <!-- RUT DESTINATARIO -->
+                <div class="form-group">
+                  <label for="transfer-rut" class="form-label">
+                    RUT Destinatario <span class="required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="transfer-rut"
+                    name="dest_rut"
+                    class="form-control"
+                    placeholder="Ej: 19.876.543-2"
+                    maxlength="12"
+                    aria-required="true"
+                    aria-describedby="transfer-rut-error"
+                  >
+                  <span id="transfer-rut-error" class="field-error" role="alert" aria-live="polite"></span>
+                </div>
+
+                <!-- NOMBRE DESTINATARIO -->
+                <div class="form-group">
+                  <label for="transfer-name" class="form-label">
+                    Nombre Completo <span class="required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="transfer-name"
+                    name="dest_name"
+                    class="form-control"
+                    placeholder="Ej: María González López"
+                    maxlength="60"
+                    aria-required="true"
+                    aria-describedby="transfer-name-error"
+                  >
+                  <span id="transfer-name-error" class="field-error" role="alert" aria-live="polite"></span>
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <!-- BANCO DESTINO -->
+                <div class="form-group">
+                  <label for="transfer-bank" class="form-label">
+                    Banco de Destino <span class="required" aria-hidden="true">*</span>
+                  </label>
+                  <select id="transfer-bank" name="dest_bank" class="form-control" aria-required="true" aria-describedby="transfer-bank-error">
+                    <option value="">-- Seleccione un banco --</option>
+                    <option value="SouthPark Bank">SouthPark Bank (Mismo banco)</option>
+                    <option value="Banco Estado Ficticio">Banco Estado Ficticio</option>
+                    <option value="Banco Andino Central">Banco Andino Central</option>
+                    <option value="Banco Digital Metropolitano">Banco Digital Metropolitano</option>
+                  </select>
+                  <span id="transfer-bank-error" class="field-error" role="alert" aria-live="polite"></span>
+                </div>
+
+                <!-- TIPO DE CUENTA DESTINO -->
+                <div class="form-group">
+                  <label for="transfer-account-type" class="form-label">
+                    Tipo de Cuenta Destino <span class="required" aria-hidden="true">*</span>
+                  </label>
+                  <select id="transfer-account-type" name="dest_account_type" class="form-control" aria-required="true">
+                    <option value="Cuenta Corriente">Cuenta Corriente</option>
+                    <option value="Cuenta Vista / RUT">Cuenta Vista / RUT</option>
+                    <option value="Cuenta de Ahorro">Cuenta de Ahorro</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- NÚMERO DE CUENTA DESTINO -->
+              <div class="form-group">
+                <label for="transfer-account-num" class="form-label">
+                  Número de Cuenta Destino <span class="required" aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="transfer-account-num"
+                  name="dest_account_num"
+                  class="form-control"
+                  placeholder="Ej: 1234567890"
+                  maxlength="20"
+                  aria-required="true"
+                  aria-describedby="transfer-account-num-error"
+                >
+                <span id="transfer-account-num-error" class="field-error" role="alert" aria-live="polite"></span>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-fieldset">
+              <legend class="fieldset-legend">Detalle de la Operación</legend>
+
+              <!-- MONTO -->
+              <div class="form-group">
+                <label for="transfer-amount" class="form-label">
+                  Monto a Transferir ($ CLP) <span class="required" aria-hidden="true">*</span>
+                </label>
+                <div class="input-wrapper">
+                  <span class="input-prefix" aria-hidden="true">$</span>
+                  <input
+                    type="number"
+                    id="transfer-amount"
+                    name="amount"
+                    class="form-control input-with-prefix"
+                    placeholder="Monto mínimo $1.000"
+                    min="1000"
+                    step="500"
+                    aria-required="true"
+                    aria-describedby="transfer-amount-hint transfer-amount-error"
+                  >
+                </div>
+                <div class="amount-quick-chips" aria-label="Montos rápidos sugeridos">
+                  <button type="button" class="btn-chip" data-amount="10000">+$10.000</button>
+                  <button type="button" class="btn-chip" data-amount="50000">+$50.000</button>
+                  <button type="button" class="btn-chip" data-amount="100000">+$100.000</button>
+                  <button type="button" class="btn-chip" data-amount="250000">+$250.000</button>
+                </div>
+                <span id="transfer-amount-hint" class="field-hint">Comisión: $0 CLP. Saldo disponible en cuenta: $1.450.000 CLP.</span>
+                <span id="transfer-amount-error" class="field-error" role="alert" aria-live="polite"></span>
+              </div>
+
+              <!-- GLOSA / MENSAJE -->
+              <div class="form-group">
+                <label for="transfer-message" class="form-label">
+                  Mensaje / Glosa <span class="optional">(Opcional)</span>
+                </label>
+                <input
+                  type="text"
+                  id="transfer-message"
+                  name="message"
+                  class="form-control"
+                  placeholder="Ej: Pago arriendo, almuerzo, cuota mensual"
+                  maxlength="60"
+                  aria-describedby="transfer-message-hint"
+                >
+                <span id="transfer-message-hint" class="field-hint">Máximo 60 caracteres. Aparecerá en la cartola del destinatario.</span>
+              </div>
+            </fieldset>
+
+            <!-- BOTÓN DE AVANCE A CONFIRMACIÓN -->
+            <div class="form-actions">
+              <button type="reset" class="btn btn-outline" id="btn-reset-transfer">Limpiar Formulario</button>
+              <button type="submit" class="btn btn-primary" id="btn-submit-transfer">
+                <span>Continuar a Confirmación 👉</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- PANTALLA 4: CONVERSIÓN DE DIVISAS (DÓLAR DEL DÍA) -->
+    <!-- ===================================================================== -->
+    <section id="view-currency" class="view-panel" aria-labelledby="currency-title" hidden>
+      <div class="dashboard-header">
+        <div>
+          <h1 id="currency-title" class="section-title">Conversión de Divisas y Tipo de Cambio</h1>
+          <p class="section-subtitle">Consulte el valor oficial del Dólar Observado y calcule conversiones en tiempo real.</p>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="btn btn-outline" id="btn-refresh-rates">
+            <span class="btn-spinner hidden" id="rates-spinner" aria-hidden="true"></span>
+            <span id="rates-btn-text">🔄 Actualizar Indicadores</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TARJETAS DE INDICADORES DEL DÍA -->
+      <div class="cards-grid">
+        <!-- DÓLAR OBSERVADO -->
+        <article class="rate-card" aria-labelledby="rate-usd-title">
+          <div class="rate-card-header">
+            <span class="rate-flag" aria-hidden="true">🇺🇸</span>
+            <div>
+              <h2 id="rate-usd-title" class="rate-name">Dólar Observado (USD)</h2>
+              <span class="rate-source">Fuente: mindicador.cl / Banco Central</span>
+            </div>
+          </div>
+          <div class="rate-value-block">
+            <span class="rate-value" id="val-dolar">$ 945,50</span>
+            <span class="rate-currency">CLP por 1 USD</span>
+          </div>
+          <div class="rate-footer">
+            <span class="rate-date" id="date-dolar">Fecha de referencia: Hoy</span>
+            <span class="badge-status badge-success">En línea</span>
+          </div>
+        </article>
+
+        <!-- UF (UNIDAD DE FOMENTO) -->
+        <article class="rate-card" aria-labelledby="rate-uf-title">
+          <div class="rate-card-header">
+            <span class="rate-flag" aria-hidden="true">🇨🇱</span>
+            <div>
+              <h2 id="rate-uf-title" class="rate-name">Unidad de Fomento (UF)</h2>
+              <span class="rate-source">Indicador económico reajustable</span>
+            </div>
+          </div>
+          <div class="rate-value-block">
+            <span class="rate-value" id="val-uf">$ 37.850,20</span>
+            <span class="rate-currency">CLP por 1 UF</span>
+          </div>
+          <div class="rate-footer">
+            <span class="rate-date" id="date-uf">Fecha de referencia: Hoy</span>
+            <span class="badge-status badge-success">En línea</span>
+          </div>
+        </article>
+      </div>
+
+      <!-- CALCULADORA DE CONVERSIÓN -->
+      <div class="card converter-card">
+        <h2 class="card-title">Calculadora de Conversión Dólar / Peso Chileno</h2>
+        <p class="card-subtitle">Realice simulaciones instantáneas de compra o venta de dólares al valor oficial.</p>
+
+        <form id="form-converter" class="converter-flow" novalidate>
+          <div class="converter-grid">
+            <!-- MONTO ORIGEN -->
+            <div class="form-group">
+              <label for="converter-amount" class="form-label" id="converter-amount-label">
+                Monto en Pesos Chilenos ($ CLP)
+              </label>
+              <div class="input-wrapper">
+                <span class="input-prefix" id="converter-prefix" aria-hidden="true">$</span>
+                <input
+                  type="number"
+                  id="converter-amount"
+                  class="form-control input-with-prefix"
+                  placeholder="Ej: 100000"
+                  min="1"
+                  step="any"
+                  value="100000"
+                  aria-required="true"
+                  aria-describedby="converter-amount-error"
+                >
+              </div>
+              <span id="converter-amount-error" class="field-error" role="alert" aria-live="polite"></span>
+            </div>
+
+            <!-- BOTÓN DE INVERSIÓN DE SENTIDO -->
+            <div class="converter-swap-wrapper">
+              <button
+                type="button"
+                id="btn-swap-currency"
+                class="btn-swap"
+                aria-label="Invertir dirección de conversión (CLP a USD o USD a CLP)"
+                title="Invertir monedas"
+              >
+                ⇄
+              </button>
+            </div>
+
+            <!-- RESULTADO OBTENIDO -->
+            <div class="form-group">
+              <label class="form-label" id="converter-result-label">Monto Equivalente en Dólares (USD)</label>
+              <div class="converter-result-box" aria-live="polite">
+                <span class="result-number" id="converter-result-value">105,76 USD</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- DESGLOSE DE TASA -->
+          <div class="converter-breakdown">
+            <div class="breakdown-item">
+              <span>Tasa de cambio aplicada:</span>
+              <strong id="converter-applied-rate">1 USD = $945,50 CLP</strong>
+            </div>
+            <div class="breakdown-item">
+              <span>Comisión de cambio:</span>
+              <strong class="text-success">$0 CLP (Exento para clientes)</strong>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL DE CONFIRMACIÓN DE TRANSFERENCIA (ACCESIBLE Y NAVEGABLE) -->
+  <!-- ======================================================================= -->
+  <div id="modal-confirm" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-confirm-title" aria-describedby="modal-confirm-desc">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-icon" aria-hidden="true">🔒</div>
+        <div>
+          <h2 id="modal-confirm-title" class="modal-title">Confirmar Transferencia</h2>
+          <p id="modal-confirm-desc" class="modal-subtitle">Por favor revise los datos antes de autorizar el débito de su cuenta.</p>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <dl class="confirm-summary-list">
+          <div class="confirm-row">
+            <dt>Destinatario:</dt>
+            <dd id="modal-dest-name">-</dd>
+          </div>
+          <div class="confirm-row">
+            <dt>RUT:</dt>
+            <dd id="modal-dest-rut">-</dd>
+          </div>
+          <div class="confirm-row">
+            <dt>Banco:</dt>
+            <dd id="modal-dest-bank">-</dd>
+          </div>
+          <div class="confirm-row">
+            <dt>Cuenta Destino:</dt>
+            <dd id="modal-dest-account">-</dd>
+          </div>
+          <div class="confirm-row">
+            <dt>Cuenta de Cargo:</dt>
+            <dd id="modal-source-account">-</dd>
+          </div>
+          <div class="confirm-row">
+            <dt>Glosa / Mensaje:</dt>
+            <dd id="modal-message">-</dd>
+          </div>
+          <div class="confirm-row confirm-row-total">
+            <dt>Monto a Debitar:</dt>
+            <dd id="modal-amount">$0 CLP</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" id="btn-modal-cancel">
+          Modificar Datos
+        </button>
+        <button type="button" class="btn btn-primary" id="btn-modal-confirm">
+          <span class="btn-spinner hidden" id="modal-spinner" aria-hidden="true"></span>
+          <span id="modal-btn-text">Autorizar y Transferir</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL COMPROBANTE DE ÉXITO DE TRANSFERENCIA -->
+  <!-- ======================================================================= -->
+  <div id="modal-receipt" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="receipt-title">
+    <div class="modal-card receipt-card">
+      <div class="receipt-header">
+        <div class="receipt-success-icon" aria-hidden="true">✓</div>
+        <h2 id="receipt-title" class="receipt-title">¡Transferencia Realizada con Éxito!</h2>
+        <p class="receipt-subtitle">Comprobante de operación electrónica</p>
+      </div>
+
+      <div class="receipt-body">
+        <div class="receipt-amount-display">
+          <span class="receipt-amount-label">Monto Transferido</span>
+          <span class="receipt-amount-val" id="receipt-amount">$ 0 CLP</span>
+        </div>
+
+        <div class="receipt-details">
+          <div class="receipt-item">
+            <span>N° Operación:</span>
+            <strong id="receipt-tx-id">#SPB-2026-0000</strong>
+          </div>
+          <div class="receipt-item">
+            <span>Fecha y Hora:</span>
+            <strong id="receipt-datetime">-</strong>
+          </div>
+          <div class="receipt-item">
+            <span>Destinatario:</span>
+            <strong id="receipt-dest-name">-</strong>
+          </div>
+          <div class="receipt-item">
+            <span>RUT Destinatario:</span>
+            <strong id="receipt-dest-rut">-</strong>
+          </div>
+          <div class="receipt-item">
+            <span>Banco Destino:</span>
+            <strong id="receipt-bank">-</strong>
+          </div>
+          <div class="receipt-item">
+            <span>Nuevo Saldo Disponible:</span>
+            <strong class="text-success" id="receipt-new-balance">-</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="receipt-footer">
+        <button type="button" class="btn btn-primary btn-block" id="btn-receipt-close">
+          Ir al Resumen de Movimientos
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICACIÓN GLOBAL (Flotante) -->
+  <div id="toast-notification" class="toast hidden" role="status" aria-live="polite">
+    <span class="toast-icon" id="toast-icon" aria-hidden="true">ℹ️</span>
+    <span class="toast-message" id="toast-text">Mensaje</span>
+  </div>
+
+  <!-- PIE DE PÁGINA ACCESIBLE -->
+  <footer class="app-footer" role="contentinfo">
+    <div class="footer-container">
+      <p class="footer-text">
+        <strong>SouthPark Bank</strong> &copy; 2026. Plataforma demostrativa desarrollada para el ramo de
+        <em>Programación Orientada a Objeto Seguro (TI3V21)</em>.
+      </p>
+      <div class="footer-security-badge" aria-label="Seguridad del sitio">
+        <span class="badge-lock" aria-hidden="true">🔒</span>
+        <span>Validación Defensiva Client-Side & Algoritmo Módulo 11 Oficial</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
