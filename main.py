@@ -14,6 +14,11 @@ pruebas del Guion de Evaluación Docente (P01 a P19).
 import sys
 import os
 import subprocess
+import functools
+import http.server
+import socket
+import threading
+import webbrowser
 from datetime import datetime
 from typing import Optional
 
@@ -815,13 +820,79 @@ def ejecutar_bateria_pruebas():
 
 
 # ==============================================================================
-# MENÚ PRINCIPAL DEL SISTEMA
+# MODO INTERFAZ GRÁFICA (GUI WEB EN EL NAVEGADOR)
 # ==============================================================================
 
-def main():
+def _obtener_puerto_disponible(puerto_inicial: int = 8000, max_intentos: int = 20) -> int:
+    """Busca un puerto libre en el rango para evitar conflictos si ya hay un servicio activo."""
+    for offset in range(max_intentos):
+        puerto = puerto_inicial + offset
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            if s.connect_ex(("127.0.0.1", puerto)) != 0:
+                return puerto
+    return puerto_inicial
+
+
+def ejecutar_modo_gui():
+    """
+    Inicia un servidor HTTP local seguro para servir la interfaz web (GUI)
+    contenida en la carpeta frontend/ y abre automáticamente el navegador del usuario.
+    """
+    frontend_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend")
+    if not os.path.isdir(frontend_dir):
+        print(f"\n❌ [ERROR]: No se encontró la carpeta 'frontend/' en {frontend_dir}")
+        print("Asegúrese de que existan los archivos index.html, styles.css y app.js.")
+        return
+
+    puerto = _obtener_puerto_disponible(8000)
+    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=frontend_dir)
+
+    class CustomTCPServer(http.server.ThreadingHTTPServer):
+        allow_reuse_address = True
+
+    try:
+        httpd = CustomTCPServer(("127.0.0.1", puerto), handler)
+    except Exception as e:
+        print(f"\n❌ [ERROR]: No se pudo iniciar el servidor web en el puerto {puerto}: {e}")
+        return
+
+    server_thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    server_thread.start()
+
+    url = f"http://localhost:{puerto}"
+    print("\n" + "=" * 65)
+    print("        🌐 INTERFAZ GRÁFICA WEB (GUI) - SOUTHPARK BANK")
+    print("=" * 65)
+    print(f"📁 Directorio servido : {frontend_dir}")
+    print(f"🚀 Servidor activo en : {url}")
+    print("🌍 Abriendo la aplicación en su navegador web...")
+    print("=" * 65)
+
+    try:
+        webbrowser.open(url)
+    except Exception:
+        pass
+
+    try:
+        input("\n👉 Presione ENTER para detener el servidor web y volver al selector principal...")
+    except (KeyboardInterrupt, EOFError):
+        pass
+    finally:
+        print("\n🛑 Deteniendo servidor web...")
+        httpd.shutdown()
+        httpd.server_close()
+        print("✅ Servidor web cerrado exitosamente.\n")
+
+
+# ==============================================================================
+# MENÚ CONSOLA (CLI CLÁSICO E INTERACTIVO)
+# ==============================================================================
+
+def menu_cli():
+    """Menú interactivo por consola con todas las operaciones bancarias y pruebas."""
     while True:
         print("\n" + "=" * 65)
-        print("                SISTEMA BANCARIO - SOUTHPARK BANK")
+        print("          SISTEMA BANCARIO - SOUTHPARK BANK (MODO CLI)")
         print("     Asignatura: Programación Orientada a Objeto Seguro")
         print("     Equipo: | Integrante: Isaias Arancibia")
         print("=" * 65)
@@ -855,6 +926,53 @@ def main():
         else:
             # Satisface Prueba P18: Opción inexistente (ej: 99)
             print(f"\n⚠️  [ALERTA]: La opción '{opcion}' no es válida. Muestra un mensaje y vuelve al menú.")
+
+
+# ==============================================================================
+# PUNTO DE ENTRADA PRINCIPAL Y SELECTOR DE MODO (CLI O GUI)
+# ==============================================================================
+
+def main():
+    """
+    Punto de entrada de la aplicación.
+    Pregunta al usuario si desea ejecutar en Modo Consola (CLI) o Modo Interfaz Gráfica (GUI).
+    También admite flags por línea de comandos: --cli o --gui.
+    """
+    if len(sys.argv) > 1:
+        flag = sys.argv[1].lower().strip()
+        if flag in ("--cli", "-c", "cli"):
+            menu_cli()
+            return
+        elif flag in ("--gui", "-g", "gui"):
+            ejecutar_modo_gui()
+            return
+        elif flag in ("--test", "-t", "test"):
+            ejecutar_bateria_pruebas()
+            return
+
+    while True:
+        print("\n" + "=" * 65)
+        print("                SISTEMA BANCARIO - SOUTHPARK BANK")
+        print("     Asignatura: Programación Orientada a Objeto Seguro")
+        print("     Equipo: | Integrante: Isaias Arancibia")
+        print("=" * 65)
+        print("  Seleccione el modo de ejecución:")
+        print("  1. Modo Consola (CLI interactivo y Guion de Pruebas Docente)")
+        print("  2. Modo Interfaz Gráfica (GUI Web en el Navegador)")
+        print("  0. Salir del sistema")
+        print("=" * 65)
+
+        modo = input("👉 Ingrese su opción [1/2/0]: ").strip()
+
+        if modo == "1":
+            menu_cli()
+        elif modo == "2":
+            ejecutar_modo_gui()
+        elif modo == "0":
+            print("\n👋 Gracias por utilizar SouthPark Bank. ¡Hasta pronto!\n")
+            sys.exit(0)
+        else:
+            print(f"\n⚠️  [ALERTA]: Opción '{modo}' no es válida. Ingrese 1 para Consola, 2 para GUI o 0 para Salir.")
 
 
 if __name__ == "__main__":
