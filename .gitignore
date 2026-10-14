@@ -258,3 +258,7 @@ crash_dumps/
 # Bitácoras de desarrollo personal / local
 BITACORA.md
 [Bb]itacora*.md
+
+# Documentos y pautas PDF locales
+*.pdf
+

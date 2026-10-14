@@ -1,4 +1,4 @@
-# 🏛️ SouthPark Bank - Core Bancario & Plataforma Digital
+# 🏛️ Sistema Bancario - SouthPark Bank
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
 ![SQLite3](https://img.shields.io/badge/Database-SQLite3-003B57?logo=sqlite&logoColor=white)
@@ -6,123 +6,61 @@
 ![Frontend](https://img.shields.io/badge/UI-CLI%20%2B%20Web%20GUI-0284c7)
 ![Seguridad](https://img.shields.io/badge/Seguridad-CWE--89%20%7C%20M%C3%B3dulo%2011-darkgreen)
 
-Plataforma bancaria orientada a objetos desarrollada en **Python** y **JavaScript/HTML/CSS puro**, implementando persistencia transaccional en **SQLite**, arquitectura desacoplada en capas (Modelo, DAO, Servicios, CLI y Web GUI), consumo resiliente de APIs financieras externas y validación defensiva integral.
+---
+
+## 1. Integrantes y negocio
+
+- **Negocio asignado:** Banco (**SouthPark Bank**).
+- **Equipo:** *(Trabajo Individual)*.
+- **Integrante:** Isaias Arancibia.
+- **RUT:** 21.873.976-8.
+- **Institución:** INACAP - Sede Puente Alto.
+- **Carrera:** Ingeniería Informática.
+- **Asignatura:** Programación Orientada a Objeto Seguro (TI3V21).
+- **Docente:** Michael Arjel.
+- **Indicador Económico Externo:** Unidad de Fomento (UF) y Dólar Observado (USD) consumidos en tiempo real mediante la API pública de `https://mindicador.cl`.
 
 ---
 
-## 📋 Tabla de Contenidos
+## 2. Cómo instalar y ejecutar el programa, paso a paso, desde un computador que solo tiene Python
 
-1. [Información Académica y Negocio](#1-información-académica-y-negocio)
-2. [Arquitectura y Estructura del Proyecto](#2-arquitectura-y-estructura-del-proyecto)
-3. [Cómo Instalar y Ejecutar Paso a Paso](#3-cómo-instalar-y-ejecutar-paso-a-paso)
-   - [3.1. Requisitos y Dependencias](#31-requisitos-y-dependencias)
-   - [3.2. Selector Interactivo de Ejecución](#32-selector-interactivo-de-ejecución)
-   - [3.3. Modo Interfaz Gráfica (Web GUI)](#33-modo-interfaz-gráfica-web-gui)
-   - [3.4. Modo Consola (CLI Interactivo)](#34-modo-consola-cli-interactivo)
-4. [Usuarios y Perfiles de Prueba (Multi-Rol)](#4-usuarios-y-perfiles-de-prueba-multi-rol)
-5. [Guía de Pruebas Oficial del Guion Docente (P01 a P19)](#5-guía-de-pruebas-oficial-del-guion-docente-p01-a-p19)
-6. [Decisiones de Seguridad y Programación Defensiva](#6-decisiones-de-seguridad-y-programación-defensiva)
-7. [Bitácora de Uso y Decisiones con Inteligencia Artificial](#7-bitácora-de-uso-y-decisiones-con-inteligencia-artificial)
+El software está diseñado para ejecutarse de manera autónoma en cualquier computador que disponga de **Python 3.10 o superior**, sin necesidad de instalar motores de bases de datos externos ni software adicional, ya que utiliza la librería nativa `sqlite3` y crea automáticamente su base de datos local `banco.db` al iniciar.
 
----
-
-## 1. Información Académica y Negocio
-
-- **Institución:** INACAP - Sede Puente Alto
-- **Carrera:** Ingeniería Informática
-- **Asignatura:** Programación Orientada a Objeto Seguro (TI3V21)
-- **Docente:** Michael Arjel
-- **Estudiante:** Isaias Arancibia (RUT: 21.873.976-8)
-- **Equipo:** *(Trabajo Individual)*
-- **Negocio:** Banco (**SouthPark Bank**)
-- **Servicios Externos:** API pública de [mindicador.cl](https://mindicador.cl) (Dólar Observado y Unidad de Fomento).
-
----
-
-## 2. Arquitectura y Estructura del Proyecto
-
-El sistema aplica una estricta separación de responsabilidades en capas desacopladas:
-
-```text
-Bank-System/
-├── model/                     # Capa de Dominio (POO pura)
-│   ├── cliente.py             # Entidad Cliente con validaciones defensivas
-│   ├── rut.py                 # Encapsulamiento y algoritmo Módulo 11 oficial
-│   ├── mora.py                # Estado y montos de morosidad
-│   ├── cuenta.py              # Clase abstracta base (@abstractmethod, saldo, sobregiro)
-│   ├── cuenta_corriente.py    # Subtipo con cupo de sobregiro
-│   ├── cuenta_ahorro.py       # Subtipo con tasa de interés y reajuste UF
-│   ├── cuenta_vista.py        # Subtipo polimórfico sin sobregiro ni interés
-│   ├── cuenta_factory.py      # Patrón Factory Method (bloqueo por mora P15)
-│   ├── transaccion.py         # Cabecera de transacción bancaria
-│   ├── movimiento.py          # Detalle de movimiento (Composición UML)
-│   ├── cartola.py             # Generador de estados de cuenta
-│   ├── empleado.py            # Clase base de funcionarios del banco
-│   ├── cajero.py              # Subtipo Empleado: operaciones de ventanilla
-│   ├── ejecutivo.py           # Subtipo Empleado: apertura de cuentas y clientes
-│   └── enums.py               # Enumeraciones de dominio (TipoCuenta, TipoMovimiento, etc.)
-│
-├── dao/                       # Capa de Acceso a Datos (Persistencia SQLite3)
-│   ├── database.py            # Conexión, PRAGMA foreign_keys y creación autónoma de tablas
-│   ├── cliente_dao.py         # CRUD parametrizado para Clientes (anti SQL Injection)
-│   ├── cuenta_dao.py          # CRUD parametrizado y reconstrucción polimórfica de Cuentas
-│   └── transaccion_dao.py     # Transaccionalidad atómica Cabecera-Detalle (ACID)
-│
-├── services/                  # Servicios de Integración Externa
-│   └── indicador_service.py   # Consumo de mindicador.cl con timeout explícito y User-Agent
-│
-├── frontend/                  # Interfaz Gráfica Web Multi-Rol (HTML5, CSS3 y Vanilla JS)
-│   ├── index.html             # Estructura semántica, accesible y vistas SPA
-│   ├── styles.css             # Diseño corporativo bancario sobrio y responsive
-│   └── app.js                 # Lógica cliente, validaciones Módulo 11 y simulación de roles
-│
-├── exceptions.py              # Jerarquía de excepciones de dominio y seguridad
-├── main.py                    # Entrada principal con selector (CLI o Web GUI) y pruebas P01-P19
-├── requirements.txt           # Dependencias oficiales (requests>=2.31.0)
-└── banco.db                   # Base de datos SQLite local generada automáticamente
+### Paso 1: Clonar o descargar el repositorio
+Abrir una terminal (consola de comandos) y ubicarse en la carpeta raíz del proyecto:
+```bash
+cd Bank-System
 ```
 
----
+### Paso 2: (Opcional pero recomendado) Crear y activar un entorno virtual
+- En **Linux / macOS**:
+  ```bash
+  python3 -m venv venv
+  source venv/bin/activate
+  ```
+- En **Windows**:
+  ```bash
+  python -m venv venv
+  venv\Scripts\activate
+  ```
 
-## 3. Cómo Instalar y Ejecutar Paso a Paso
+### Paso 3: Instalar paquetes requeridos
+Instalar la única dependencia externa necesaria para el consumo de la API económica:
+```bash
+pip install -r requirements.txt
+```
+*(Instala `requests>=2.31.0`).*
 
-El software requiere **Python 3.10 o superior**. Al ejecutarse, detecta automáticamente la presencia de la base de datos y crea sus tablas si aún no existen.
-
-### 3.1. Requisitos y Dependencias
-
-1. **Abrir la terminal** y situarse en la raíz del repositorio:
-   ```bash
-   cd Bank-System
-   ```
-
-2. **(Opcional pero recomendado) Crear un entorno virtual:**
-   ```bash
-   # Linux / macOS
-   python3 -m venv venv
-   source venv/bin/activate
-
-   # Windows
-   python -m venv venv
-   venv\Scripts\activate
-   ```
-
-3. **Instalar dependencias necesarias:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-   *(Instala `requests>=2.31.0` para la consulta de divisas en tiempo real).*
-
----
-
-### 3.2. Selector Interactivo de Ejecución
-
-Inicia el programa con:
+### Paso 4: Ejecutar el programa
+Iniciar el lanzador principal ejecutando:
 ```bash
 python main.py
 ```
-*(O `python3 main.py` según la configuración de tu sistema).*
+*(O `python3 main.py` según la configuración de su sistema).*
 
-El sistema presentará el **selector principal de modo**:
+### Paso 5: Selección de Modo de Ejecución
+Al iniciar, el sistema despliega el selector interactivo:
+
 ```text
 =================================================================
                 SISTEMA BANCARIO - SOUTHPARK BANK
@@ -137,57 +75,38 @@ El sistema presentará el **selector principal de modo**:
 👉 Ingrese su opción [1/2/0]: 
 ```
 
-> **Atajos por línea de comandos:**  
-> - `python main.py --cli` : Entra directo al menú en consola.  
-> - `python main.py --gui` : Levanta el servidor local y abre el navegador web.  
-> - `python main.py --test` : Ejecuta directamente la batería docente de pruebas P01 a P19.
+- **Opción `1` (Modo Consola - CLI):**  
+  Despliega el menú tradicional interactivo por terminal para gestionar clientes, aperturar cuentas, transferir, ver cartolas, consultar divisas y ejecutar la batería de pruebas docentes.
+- **Opción `2` (Modo Interfaz Gráfica - Web GUI):**  
+  Inicia automáticamente un servidor web local en segundo plano en `http://localhost:8000` y **abre su navegador predeterminado** con la plataforma web multi-rol de SouthPark Bank. Al presionar <kbd>Enter</kbd> en la terminal, el servidor se detiene de forma limpia. *(También puede abrirse directamente haciendo doble clic en `frontend/index.html`)*.
+
+> **Atajos directos por línea de comandos:**  
+> - `python main.py --cli` : Ingresa directo al menú de consola.  
+> - `python main.py --gui` : Inicia directo el servidor web y abre el navegador.  
+> - `python main.py --test` : Ejecuta directamente la batería de pruebas P01 a P19.
 
 ---
 
-### 3.3. Modo Interfaz Gráfica (Web GUI)
+### 2.1. Perfiles y Usuarios Demo (Multi-Rol para la Web GUI)
 
-Al seleccionar la opción **`2`**, el sistema:
-1. Inicia un servidor web local en segundo plano en `http://localhost:8000` (o el siguiente puerto libre disponible).
-2. **Abre automáticamente tu navegador web predeterminado** con la plataforma web de **SouthPark Bank**.
-3. Al presionar <kbd>Enter</kbd> en la terminal, el servidor web se detiene de forma limpia.
+En la pantalla de inicio de sesión de la Web GUI se dispone de botones de **acceso rápido con 1 clic** para alternar entre perfiles:
 
-*(También puedes abrir directamente [frontend/index.html](file:///home/noname/Desktop/projects/Bank-System/frontend/index.html) haciendo doble clic en el archivo).*
-
----
-
-### 3.4. Modo Consola (CLI Interactivo)
-
-Al seleccionar la opción **`1`**, se despliega el menú tradicional interactivo por terminal:
-- **`1`**: Gestión de Clientes (Crear, Listar, Modificar dirección, Eliminar).
-- **`2`**: Gestión de Cuentas (Creación polimórfica con `CuentaFactory`).
-- **`3`**: Operaciones Bancarias (Depósitos, Giros y Transferencias).
-- **`4`**: Cartola Bancaria (Consulta de transacciones y movimientos).
-- **`5`**: Indicadores Económicos (Consulta oficial de UF y Dólar vía API externa).
-- **`6`**: **Batería Automatizada de Pruebas Docente (P01 a P19)**.
-- **`0`**: Salir de forma limpia asegurando persistencia en disco.
-
----
-
-## 4. Usuarios y Perfiles de Prueba (Multi-Rol)
-
-Para facilitar la evaluación docente, la pantalla de inicio de sesión de la Web GUI cuenta con **botones de 1 clic** (`[👤 Cliente] [💵 Cajero] [💼 Ejecutivo] [🛡️ Admin]`) que completan automáticamente las credenciales:
-
-| Perfil | Usuario / RUT | Clave | Funcionalidades Destacadas |
+| Perfil | Usuario / RUT | Clave | Funcionalidades Habilitadas |
 | :--- | :--- | :---: | :--- |
-| **👤 Cliente Titular**<br>*(Isaias Arancibia)* | `cliente`<br>`12.345.678-5` | `123456` | • Resumen de saldos, sobregiro y disponibilidad combinada.<br>• Cartola bancaria de últimos movimientos.<br>• Transferencias electrónicas con modal de confirmación.<br>• Calculadora de divisas Dólar ↔ Peso en tiempo real. |
-| **💵 Cajero Bancario**<br>*(Juan Morales)* | `cajero`<br>`14.253.647-8` | `123456` | • Módulo de ventanilla para **Depósitos** y **Giros** en efectivo.<br>• Validación de saldo insuficiente (**P14**).<br>• Bloqueo automático de giros para clientes en mora (**P15**).<br>• Consulta de estado de cualquier cuenta del banco. |
-| **💼 Ejecutivo de Cuentas**<br>*(Andrea Soto)* | `ejecutivo`<br>`15.364.758-9` | `123456` | • **Apertura de Cuentas (`CuentaFactory`):** Corriente, Ahorro y Vista.<br>• **Regla Bloqueante P15:** Alerta defensiva si el cliente registra morosidad.<br>• **Alta de Clientes:** Validación de RUT Módulo 11 y dirección mínima. |
-| **🛡️ Administrador**<br>*(Carlos Admin)* | `admin`<br>`11.111.111-1` | `123456` | • Acceso total a todas las vistas del banco.<br>• Métricas consolidadas (fondos custodiados, clientes y cuentas).<br>• **Ejecutor Web de Pruebas Docente:** Visualiza los 19 casos en vivo.<br>• **Simulador de Morosidad:** Activa/desactiva la mora de cualquier cliente para probar los bloqueos. |
+| **👤 Cliente Titular**<br>*(Isaias Arancibia)* | `cliente`<br>`12.345.678-5` | `123456` | • Saldo real, cupo de sobregiro y disponible total.<br>• Historial de últimos movimientos en cartola.<br>• Transferencias con modal de confirmación antes de debitar.<br>• Calculadora de divisas CLP ↔ USD con tasa oficial en vivo. |
+| **💵 Cajero Bancario**<br>*(Juan Morales)* | `cajero`<br>`14.253.647-8` | `123456` | • Ventanilla de depósitos y giros de efectivo en tiempo real.<br>• Bloqueo defensivo por fondos insuficientes (**P14**).<br>• Bloqueo de operaciones a clientes con morosidad (**P15**).<br>• Consulta de saldos y mora de cualquier cuenta. |
+| **💼 Ejecutivo de Cuentas**<br>*(Andrea Soto)* | `ejecutivo`<br>`15.364.758-9` | `123456` | • **Apertura de Cuentas (`CuentaFactory`):** Corriente, Ahorro y Vista.<br>• **Regla Bloqueante P15:** Alerta defensiva si el cliente registra mora.<br>• **Alta de Clientes:** Validación de RUT Módulo 11 y dirección mínima. |
+| **🛡️ Administrador**<br>*(Carlos Admin)* | `admin`<br>`11.111.111-1` | `123456` | • Acceso irrestricto a todas las vistas del banco.<br>• Métricas globales de fondos, cuentas y clientes.<br>• **Ejecutor Web de Pruebas Docente:** Evalúa las 19 pruebas interactivamente.<br>• **Simulador de Morosidad:** Switch para activar/desactivar mora a cualquier cliente. |
 
 ---
 
-## 5. Guía de Pruebas Oficial del Guion Docente (P01 a P19)
+### 2.2. Guía de Ejecución de las Pruebas Docente (P01 a P19)
 
-Para verificar el cumplimiento de los 19 casos de prueba, selecciona la opción **`6`** en la consola o el botón **"▶️ Ejecutar las 19 Pruebas"** en el panel de Administrador:
+Para verificar el cumplimiento de las 19 pruebas oficiales, seleccione la opción **`6`** en la consola o el botón **"▶️ Ejecutar las 19 Pruebas"** en el panel de Administrador de la Web GUI:
 
 | N° | Caso de Prueba | Entrada de Prueba | Comportamiento del Sistema | Estado |
 | :---: | :--- | :--- | :--- | :---: |
-| **P01** | El programa se ejecuta | `python main.py` | Inicia menú interactivo sin errores de inicio | ✅ CUMPLE |
+| **P01** | El programa se ejecuta | `python main.py` | Despliega selector y menú sin errores de inicio | ✅ CUMPLE |
 | **P02** | Crear: cliente | Luis Pérez, 12.345.678-5 | Persistido en tabla `clientes` de SQLite | ✅ CUMPLE |
 | **P03** | Listar: cliente | Consulta general | Registro recuperado y mostrado en pantalla | ✅ CUMPLE |
 | **P04** | Modificar: cliente | Modificar dirección a Av. Las Lilas 456 | Actualizado en base de datos y confirmado en listado | ✅ CUMPLE |
@@ -211,15 +130,18 @@ Para verificar el cumplimiento de los 19 casos de prueba, selecciona la opción 
 
 ---
 
-## 6. Decisiones de Seguridad y Programación Defensiva
+## 3. Decisiones de seguridad
 
-### 6.1. Prevención de Inyección SQL (CWE-89)
-La persistencia de datos implementada en `dao/` utiliza exclusivamente la librería estándar oficial `sqlite3` aplicando consultas parametrizadas mediante marcadores de posición posicionales (`?`).
-- **Prohibición estricta:** Ninguna sentencia concatena texto ni utiliza formateo de cadenas con datos provistos por el usuario.
-- **Transaccionalidad Atómica (ACID):** El registro de transacciones compuestas se ejecuta dentro de bloques `try ... conn.commit()` y `except ... conn.rollback()`.
+### 3.1. Cómo se evita la inyección SQL (SQL Injection - CWE-89)
 
+La persistencia de datos implementada en la capa `dao/` utiliza exclusivamente la librería estándar oficial `sqlite3` aplicando consultas parametrizadas mediante marcadores de posición posicionales (`?`).
+
+- **Regla estricta:** Está terminantemente prohibido el uso de concatenación de cadenas (`+`), interpolación de cadenas (`%`) o f-strings (`f"..."`) con datos provistos por el usuario.
+- **Transaccionalidad Atómica (ACID):** En operaciones compuestas (como el registro de una `Transaccion` junto con sus líneas de detalle `Movimiento`), se gestiona la transacción dentro de un bloque atómico protegido por `try ... conn.commit()` y `except ... conn.rollback()`, asegurando que no queden transacciones huérfanas ante cualquier interrupción.
+
+#### Ejemplo de Código Real del Repositorio (`dao/cliente_dao.py`):
 ```python
-# SEGURO (dao/cliente_dao.py): Consultas parametrizadas con marcadores (?)
+# SEGURO: La consulta utiliza marcadores posicionales (?) y los valores se pasan como tupla separada.
 sql = """
     INSERT INTO clientes (rut, nombre, direccion, is_mora, amount_mora)
     VALUES (?, ?, ?, ?, ?);
@@ -228,24 +150,58 @@ cursor.execute(sql, (rut_fmt, cliente.nombre, cliente.direccion, is_mora, amount
 conn.commit()
 ```
 
-### 6.2. Validación Defensiva de Entradas
-1. **Algoritmo Módulo 11 Chileno (`model/rut.py`):** El setter `@identificador.setter` valida estrictamente el dígito verificador.
-2. **Encapsulamiento en Setters (`model/cliente.py`, `model/cuenta.py`):** Validación de tipos (`str`, `float`, `int`), longitudes mínimas y valores estrictamente positivos.
-3. **Manejo Resiliente de APIs Externas (`services/indicador_service.py`):** Captura específica de `requests.exceptions.Timeout`, `requests.exceptions.ConnectionError`, `requests.exceptions.HTTPError` y `json.JSONDecodeError`, evitando que caídas de internet interrumpan la operación del software.
+#### Ejemplo de Persistencia Atómica Cabecera-Detalle (`dao/transaccion_dao.py`):
+```python
+try:
+    cursor.execute("INSERT INTO transacciones (numero_cuenta, fecha) VALUES (?, ?);", 
+                   (transaccion.cuenta.numero_cuenta, fecha_iso))
+    transaccion_id = cursor.lastrowid
+
+    for mov in transaccion.detalles:
+        cursor.execute("""
+            INSERT INTO movimientos (transaccion_id, tipo, monto, descripcion, cuenta_origen, cuenta_destino)
+            VALUES (?, ?, ?, ?, ?, ?);
+        """, (transaccion_id, mov.tipo.value, mov.monto, mov.descripcion, origen_num, destino_num))
+
+    conn.commit()  # Confirmación atómica de cabecera y detalles
+except Exception as ex:
+    conn.rollback()  # Reversión completa en caso de cualquier fallo
+    raise ex
+```
 
 ---
 
-## 7. Bitácora de Uso y Decisiones con Inteligencia Artificial
+### 3.2. Qué entradas se validan (Validación Defensiva)
 
-Durante el desarrollo asistido con Inteligencia Artificial, se analizaron técnicamente diversas propuestas, aplicando criterio profesional para adoptar, modificar o descartar componentes conforme a la rúbrica de evaluación:
+El sistema aplica validación defensiva en múltiples capas para garantizar la integridad de datos:
+
+1. **RUT Chileno con Algoritmo Módulo 11 (`model/rut.py` y `frontend/app.js`):**  
+   El setter `@identificador.setter` descompone el cuerpo y el dígito verificador, aplicando la serie numérica multiplicadora `[2, 3, 4, 5, 6, 7]`. Si el dígito calculado no coincide exactamente con el ingresado (o si el formato es erróneo), levanta inmediatamente `RutInvalidoError`, impidiendo la creación o actualización de clientes con RUTs falsos o erróneos (**P07 y P08**).
+2. **Nombres y Direcciones (`model/cliente.py`):**  
+   Los setters `@nombre.setter` y `@direccion.setter` verifican tipo de dato `str`, aplican `strip()` para eliminar espacios en blanco y validan longitud mínima (`len >= 2`), superando la prueba **P04** ("cambiar dirección y listar").
+3. **Montos y Saldos Bancarios (`model/cuenta.py`):**  
+   Los métodos `ingresarDinero()` y `retirarDinero()` validan tipo numérico (`int` o `float`) y montos estrictamente positivos (`monto > 0`). Valores menores o iguales a cero, caracteres alfabéticos o números negativos son rechazados impidiendo la corrupción de saldos (**P19**).
+4. **Reglas Bloqueantes de Negocio:**
+   - `SaldoInsuficienteError`: Lanzada si un giro excede el saldo real sumado al cupo de sobregiro (**P14**).
+   - `ClienteEnMoraError`: Lanzada al intentar aperturar una cuenta para un cliente con mora vigente mediante `CuentaFactory.crearCuenta()` (**P15**), o al intentar efectuar giros con morosidad activa.
+5. **Resiliencia de Red y Excepciones Tipadas (`services/indicador_service.py`):**  
+   Al consultar la API de `mindicador.cl`, se define un `timeout=5.0` y se capturan de forma explícita `requests.exceptions.Timeout` (`ApiTimeoutError`), `requests.exceptions.ConnectionError` (`ApiConexionError`), `requests.exceptions.HTTPError` y `json.JSONDecodeError` (`ApiIndicadorError`), garantizando que si se interrumpe la conexión a internet, el sistema informe al usuario sin abortar el proceso (**P17**).
+6. **Entradas por Consola y Web:**  
+   Funciones auxiliares `leer_monto()`, `leer_rut()` y `leer_texto()` en `main.py` capturan errores de conversión (`ValueError`), notificando al usuario y retornando al menú sin colapsar el programa (**P18 y P19**).
+
+---
+
+## 4. Uso de inteligencia artificial
+
+Durante el proceso de desarrollo asistido con Inteligencia Artificial, se analizaron diversas recomendaciones técnicas, aplicando criterio profesional para adoptar, modificar o descartar componentes de acuerdo con los requerimientos de seguridad, persistencia y arquitectura de la rúbrica:
 
 ### Caso 1: Descarte de Consultas Dinámicas con Formateo de Texto (SQL Injection)
-- **Sugerencia de la IA:** Para el método `actualizar` de `ClienteDAO`, la IA propuso concatenar nombres de campos y valores mediante diccionarios y f-strings (`f"UPDATE clientes SET {campo} = '{valor}' WHERE rut = '{rut}'"`), argumentando que permitía actualizar únicamente los campos modificados.
+- **Sugerencia de la IA:** Para el método `actualizar` de `ClienteDAO`, la IA propuso concatenar nombres de campos y valores mediante diccionarios y f-strings (`f"UPDATE clientes SET {campo} = '{valor}' WHERE rut = '{rut}'"`), argumentando que permitía actualizar únicamente los campos que hubiesen cambiado.
 - **Decisión Técnica:** **DESCARTADO.** Concatenar cadenas directamente en sentencias SQL introduce vulnerabilidades críticas de inyección SQL (CWE-89). Se descartó la sugerencia y se implementó una consulta SQL explícita con marcadores parametrizados `?` que pasa todos los valores como parámetros vinculados del motor SQLite.
 
 ### Caso 2: Modificación del Manejo de Excepciones en el Consumo de API
 - **Sugerencia de la IA:** En el módulo de consumo de la API de indicadores externos (`mindicador.cl`), la IA sugirió envolver toda la petición en un bloque genérico `try ... except Exception as e: return None`.
-- **Decisión Técnica:** **MODIFICADO.** Un bloque `except Exception` genérico viola los principios de manejo seguro de errores (Criterio 3.1.3), ya que silencia errores de red, impide distinguir un timeout de una falta de conectividad y enmascara fallos estructurales en los datos. Se modificó el código para capturar de forma específica `requests.exceptions.Timeout`, `requests.exceptions.ConnectionError`, `requests.exceptions.HTTPError` y `json.JSONDecodeError`, mapeándolos a excepciones de dominio explícitas (`ApiTimeoutError`, `ApiConexionError`, `ApiIndicadorError`).
+- **Decisión Técnica:** **MODIFICADO.** Un bloque `except Exception` genérico viola los principios de manejo seguro de errores (Criterio 3.1.3), ya que silencia errores de red, impide distinguir un timeout de una falta de conectividad y enmascara fallos estructurales en los datos. Se modificó el código para capturar de forma específica `requests.exceptions.Timeout`, `requests.exceptions.ConnectionError`, `requests.exceptions.HTTPError` y `json.JSONDecodeError`, mapeándolos a excepciones de dominio explícitas (`ApiTimeoutError`, `ApiConexionError`, `ApiIndicadorError`) y manteniendo la aplicación estable.
 
 ### Caso 3: Adopción del Patrón de Persistencia Atómica Transacción-Movimientos
 - **Sugerencia de la IA:** Implementar la inserción de la cabecera `transacciones` y sus líneas hijas `movimientos` dentro de un único contexto transaccional SQLite controlado por `try ... conn.commit()` y `except ... conn.rollback()`.
