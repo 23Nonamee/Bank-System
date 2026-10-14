@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Plataforma de Banca en Línea SouthPark Bank - Entorno Académico">
+  <meta name="description" content="Plataforma de Banca en Línea SouthPark Bank - Entorno Académico Multi-Rol">
   <title>SouthPark Bank | Banca en Línea Segura</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -32,9 +32,12 @@
 
       <!-- ESTADO DE SESIÓN DE USUARIO (Visible tras iniciar sesión) -->
       <div id="user-session" class="user-session hidden" aria-live="polite">
-        <div class="user-avatar" aria-hidden="true">IA</div>
+        <div class="user-avatar" id="session-avatar" aria-hidden="true">IA</div>
         <div class="user-info">
-          <span class="user-name" id="session-user-name">Isaias Arancibia</span>
+          <div class="user-name-row">
+            <span class="user-name" id="session-user-name">Isaias Arancibia</span>
+            <span class="role-badge" id="session-user-role">Cliente</span>
+          </div>
           <span class="user-rut" id="session-user-rut">RUT: 12.345.678-5</span>
         </div>
         <button id="btn-logout" class="btn btn-outline-light" type="button" aria-label="Cerrar sesión actual">
@@ -49,11 +52,12 @@
     </div>
   </header>
 
-  <!-- NAVEGACIÓN PRINCIPAL (Visible tras iniciar sesión) -->
+  <!-- NAVEGACIÓN PRINCIPAL DINÁMICA POR ROL (Visible tras iniciar sesión) -->
   <nav id="main-nav" class="main-nav hidden" aria-label="Menú principal de banca en línea">
     <div class="nav-container">
-      <ul class="nav-tabs" role="tablist">
-        <li role="presentation">
+      <ul class="nav-tabs" role="tablist" id="nav-tabs-list">
+        <!-- Pestañas Cliente -->
+        <li role="presentation" class="nav-item-role role-cliente role-admin">
           <button id="tab-summary" class="nav-tab active" role="tab" aria-selected="true" aria-controls="view-summary" type="button">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -63,7 +67,7 @@
             <span>Resumen de Cuenta</span>
           </button>
         </li>
-        <li role="presentation">
+        <li role="presentation" class="nav-item-role role-cliente role-admin">
           <button id="tab-transfer" class="nav-tab" role="tab" aria-selected="false" aria-controls="view-transfer" type="button">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -72,6 +76,42 @@
             <span>Transferencias</span>
           </button>
         </li>
+
+        <!-- Pestaña Cajero -->
+        <li role="presentation" class="nav-item-role role-cajero role-admin">
+          <button id="tab-cajero" class="nav-tab" role="tab" aria-selected="false" aria-controls="view-cajero" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+              <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+            <span>Ventanilla Cajero</span>
+          </button>
+        </li>
+
+        <!-- Pestaña Ejecutivo -->
+        <li role="presentation" class="nav-item-role role-ejecutivo role-admin">
+          <button id="tab-ejecutivo" class="nav-tab" role="tab" aria-selected="false" aria-controls="view-ejecutivo" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+            <span>Gestión Ejecutivo</span>
+          </button>
+        </li>
+
+        <!-- Pestaña Admin -->
+        <li role="presentation" class="nav-item-role role-admin">
+          <button id="tab-admin" class="nav-tab" role="tab" aria-selected="false" aria-controls="view-admin" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <span>Panel Administrador</span>
+          </button>
+        </li>
+
+        <!-- Pestaña Común: Divisas -->
         <li role="presentation">
           <button id="tab-currency" class="nav-tab" role="tab" aria-selected="false" aria-controls="view-currency" type="button">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -90,7 +130,7 @@
   <main class="main-content" id="main-content" role="main">
 
     <!-- ===================================================================== -->
-    <!-- PANTALLA 1: INICIO DE SESIÓN -->
+    <!-- PANTALLA 1: INICIO DE SESIÓN MULTI-ROL -->
     <!-- ===================================================================== -->
     <section id="view-login" class="view-panel active" aria-labelledby="login-title">
       <div class="login-card-wrapper">
@@ -102,21 +142,44 @@
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
             </div>
-            <h1 id="login-title">Acceso a Banca en Línea</h1>
-            <p class="login-subtitle">Ingrese su RUT y contraseña para operar de forma segura.</p>
+            <h1 id="login-title">Acceso a SouthPark Bank</h1>
+            <p class="login-subtitle">Inicie sesión como Cliente, Cajero, Ejecutivo o Administrador.</p>
           </div>
 
-          <!-- BANNER DE ALERTA GLOBAL (Para errores de autenticación o bloqueo) -->
+          <!-- SELECTOR RÁPIDO DE ROLES DEMO -->
+          <div class="demo-role-selector" aria-label="Seleccionar perfil demo">
+            <span class="demo-selector-label">Perfiles de Prueba con 1 Clic:</span>
+            <div class="demo-buttons-grid">
+              <button type="button" class="btn-demo-role active" data-role="cliente" title="Probar como Cliente">
+                <span class="role-icon">👤</span>
+                <span class="role-txt">Cliente</span>
+              </button>
+              <button type="button" class="btn-demo-role" data-role="cajero" title="Probar como Cajero">
+                <span class="role-icon">💵</span>
+                <span class="role-txt">Cajero</span>
+              </button>
+              <button type="button" class="btn-demo-role" data-role="ejecutivo" title="Probar como Ejecutivo">
+                <span class="role-icon">💼</span>
+                <span class="role-txt">Ejecutivo</span>
+              </button>
+              <button type="button" class="btn-demo-role" data-role="admin" title="Probar como Administrador">
+                <span class="role-icon">🛡️</span>
+                <span class="role-txt">Admin</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- BANNER DE ALERTA GLOBAL -->
           <div id="login-alert" class="alert alert-danger hidden" role="alert" aria-live="assertive">
             <span class="alert-icon" aria-hidden="true">⚠️</span>
             <span class="alert-message" id="login-alert-text"></span>
           </div>
 
           <form id="form-login" class="form-flow" novalidate>
-            <!-- CAMPO RUT -->
+            <!-- CAMPO RUT / USUARIO -->
             <div class="form-group">
               <label for="login-rut" class="form-label">
-                RUT del Titular <span class="required" aria-hidden="true">*</span>
+                RUT o Usuario <span class="required" aria-hidden="true">*</span>
               </label>
               <div class="input-wrapper">
                 <input
@@ -124,16 +187,16 @@
                   id="login-rut"
                   name="rut"
                   class="form-control"
-                  placeholder="Ej: 12.345.678-5 o 12345678-5"
-                  maxlength="12"
+                  placeholder="Ej: 12.345.678-5 o 'admin'"
+                  maxlength="20"
                   autocomplete="username"
-                  inputmode="text"
                   aria-required="true"
                   aria-describedby="login-rut-hint login-rut-error"
+                  value="12.345.678-5"
                 >
                 <span class="input-icon" aria-hidden="true">🪪</span>
               </div>
-              <span id="login-rut-hint" class="field-hint">Formato con o sin puntos, con guion y dígito verificador.</span>
+              <span id="login-rut-hint" class="field-hint">Acepta RUT chileno formateado o nombres de usuario demo.</span>
               <span id="login-rut-error" class="field-error" role="alert" aria-live="polite"></span>
             </div>
 
@@ -153,6 +216,7 @@
                   autocomplete="current-password"
                   aria-required="true"
                   aria-describedby="login-password-hint login-password-error"
+                  value="123456"
                 >
                 <button
                   type="button"
@@ -164,35 +228,38 @@
                   <span id="toggle-password-icon" aria-hidden="true">👁️</span>
                 </button>
               </div>
-              <span id="login-password-hint" class="field-hint">Clave numérica o alfanumérica de al menos 6 dígitos.</span>
+              <span id="login-password-hint" class="field-hint">Clave demo predeterminada para todos los roles: <strong>123456</strong></span>
               <span id="login-password-error" class="field-error" role="alert" aria-live="polite"></span>
             </div>
 
             <!-- BOTÓN ENVIAR -->
             <button type="submit" id="btn-submit-login" class="btn btn-primary btn-block">
               <span class="btn-spinner hidden" id="login-spinner" aria-hidden="true"></span>
-              <span id="login-btn-text">Ingresar a mi Cuenta</span>
+              <span id="login-btn-text">Ingresar al Sistema</span>
             </button>
           </form>
 
           <!-- AVISO DE DATOS FALSOS / ACADÉMICO -->
           <aside class="demo-box" aria-label="Información de prueba">
-            <div class="demo-badge">ENTORNO DEMO ACADÉMICO</div>
-            <p><strong>RUT de prueba:</strong> <code>12.345.678-5</code></p>
-            <p><strong>Clave de prueba:</strong> <code>123456</code></p>
-            <small class="demo-disclaimer">* Los datos presentados son estrictamente ficticios y con fines educativos.</small>
+            <div class="demo-badge">CREDENCIALES DEMO REGISTRADAS</div>
+            <ul class="demo-roles-list">
+              <li>👤 <strong>Cliente:</strong> <code>12.345.678-5</code> (o 'cliente') | Clave: <code>123456</code></li>
+              <li>💵 <strong>Cajero:</strong> <code>14.253.647-8</code> (o 'cajero') | Clave: <code>123456</code></li>
+              <li>💼 <strong>Ejecutivo:</strong> <code>15.364.758-9</code> (o 'ejecutivo') | Clave: <code>123456</code></li>
+              <li>🛡️ <strong>Admin:</strong> <code>11.111.111-1</code> (o 'admin') | Clave: <code>123456</code></li>
+            </ul>
           </aside>
         </div>
       </div>
     </section>
 
     <!-- ===================================================================== -->
-    <!-- PANTALLA 2: RESUMEN DE CUENTA -->
+    <!-- PANTALLA 2: RESUMEN DE CUENTA (CLIENTE / ADMIN) -->
     <!-- ===================================================================== -->
     <section id="view-summary" class="view-panel" aria-labelledby="summary-title" hidden>
       <div class="dashboard-header">
         <div>
-          <h1 id="summary-title" class="section-title">Resumen de Cuentas</h1>
+          <h1 id="summary-title" class="section-title">Resumen de Cuentas y Saldos</h1>
           <p class="section-subtitle">Consulte su saldo disponible y el historial detallado de movimientos.</p>
         </div>
         <div class="header-actions">
@@ -230,11 +297,11 @@
         <article class="account-card account-card-secondary" aria-labelledby="card-ca-title">
           <div class="card-top">
             <span class="account-type-badge badge-secondary">Cuenta de Ahorro</span>
-            <span class="account-number">N° CA-2001-4412</span>
+            <span class="account-number" id="ca-number">N° CA-2001-4412</span>
           </div>
           <div class="card-balance-block">
             <span class="balance-label">Saldo en Ahorro</span>
-            <span class="balance-amount">$ 500.000 <small>CLP</small></span>
+            <span class="balance-amount" id="ca-balance">$ 500.000 <small>CLP</small></span>
           </div>
           <div class="card-details-row">
             <div class="detail-item">
@@ -287,7 +354,7 @@
     </section>
 
     <!-- ===================================================================== -->
-    <!-- PANTALLA 3: TRANSFERENCIA BANCARIA -->
+    <!-- PANTALLA 3: TRANSFERENCIA BANCARIA (CLIENTE / ADMIN) -->
     <!-- ===================================================================== -->
     <section id="view-transfer" class="view-panel" aria-labelledby="transfer-title" hidden>
       <div class="form-page-wrapper">
@@ -299,15 +366,14 @@
         <!-- FORMULARIO DE TRANSFERENCIA -->
         <div class="card form-card">
           <form id="form-transfer" class="form-flow" novalidate>
-
             <!-- CUENTA ORIGEN -->
             <div class="form-group">
               <label for="transfer-source" class="form-label">
                 Cuenta de Origen <span class="required" aria-hidden="true">*</span>
               </label>
               <select id="transfer-source" name="source" class="form-control" aria-required="true">
-                <option value="CC-1001-9874" selected>Cuenta Corriente N° CC-1001-9874 (Disponible: $1.450.000 CLP)</option>
-                <option value="CA-2001-4412">Cuenta de Ahorro N° CA-2001-4412 (Disponible: $500.000 CLP)</option>
+                <option value="CC-1001-9874" selected>Cuenta Corriente N° CC-1001-9874</option>
+                <option value="CA-2001-4412">Cuenta de Ahorro N° CA-2001-4412</option>
               </select>
             </div>
 
@@ -325,7 +391,7 @@
                     id="transfer-rut"
                     name="dest_rut"
                     class="form-control"
-                    placeholder="Ej: 19.876.543-2"
+                    placeholder="Ej: 16.789.012-3"
                     maxlength="12"
                     aria-required="true"
                     aria-describedby="transfer-rut-error"
@@ -343,7 +409,7 @@
                     id="transfer-name"
                     name="dest_name"
                     class="form-control"
-                    placeholder="Ej: María González López"
+                    placeholder="Ej: Luis Pérez González"
                     maxlength="60"
                     aria-required="true"
                     aria-describedby="transfer-name-error"
@@ -360,10 +426,9 @@
                   </label>
                   <select id="transfer-bank" name="dest_bank" class="form-control" aria-required="true" aria-describedby="transfer-bank-error">
                     <option value="">-- Seleccione un banco --</option>
-                    <option value="SouthPark Bank">SouthPark Bank (Mismo banco)</option>
+                    <option value="SouthPark Bank" selected>SouthPark Bank (Mismo banco)</option>
                     <option value="Banco Estado Ficticio">Banco Estado Ficticio</option>
                     <option value="Banco Andino Central">Banco Andino Central</option>
-                    <option value="Banco Digital Metropolitano">Banco Digital Metropolitano</option>
                   </select>
                   <span id="transfer-bank-error" class="field-error" role="alert" aria-live="polite"></span>
                 </div>
@@ -393,6 +458,7 @@
                   class="form-control"
                   placeholder="Ej: 1234567890"
                   maxlength="20"
+                  value="CC-1002-3321"
                   aria-required="true"
                   aria-describedby="transfer-account-num-error"
                 >
@@ -450,7 +516,6 @@
               </div>
             </fieldset>
 
-            <!-- BOTÓN DE AVANCE A CONFIRMACIÓN -->
             <div class="form-actions">
               <button type="reset" class="btn btn-outline" id="btn-reset-transfer">Limpiar Formulario</button>
               <button type="submit" class="btn btn-primary" id="btn-submit-transfer">
@@ -463,7 +528,298 @@
     </section>
 
     <!-- ===================================================================== -->
-    <!-- PANTALLA 4: CONVERSIÓN DE DIVISAS (DÓLAR DEL DÍA) -->
+    <!-- PANTALLA 5: MÓDULO DE VENTANILLA DEL CAJERO (CAJERO / ADMIN) -->
+    <!-- ===================================================================== -->
+    <section id="view-cajero" class="view-panel" aria-labelledby="cajero-title" hidden>
+      <div class="dashboard-header">
+        <div>
+          <h1 id="cajero-title" class="section-title">Ventanilla de Cajas y Operaciones en Efectivo</h1>
+          <p class="section-subtitle">Realice depósitos en efectivo, giros y consultas de saldo directo de ventanilla.</p>
+        </div>
+        <div class="header-badge-wrap">
+          <span class="badge-role-cajero">Terminal de Cajero Activo</span>
+        </div>
+      </div>
+
+      <div class="cards-grid">
+        <!-- FORMULARIO DE OPERACIÓN DE CAJA -->
+        <article class="card">
+          <h2 class="card-title">💵 Registrar Movimiento de Ventanilla</h2>
+          <p class="card-subtitle">Depósitos y giros de efectivo presenciales con validación inmediata de saldo.</p>
+
+          <form id="form-cajero-op" class="form-flow" novalidate>
+            <div class="form-group">
+              <label for="cajero-op-type" class="form-label">Tipo de Movimiento <span class="required">*</span></label>
+              <select id="cajero-op-type" class="form-control" required>
+                <option value="DEPOSITO">📥 Depósito en Efectivo (Abono)</option>
+                <option value="GIRO">📤 Giro en Efectivo (Retiro)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="cajero-account-select" class="form-label">Cuenta de Destino/Origen <span class="required">*</span></label>
+              <select id="cajero-account-select" class="form-control" required>
+                <!-- Se inyecta dinámicamente con las cuentas del sistema -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="cajero-amount" class="form-label">Monto en Efectivo ($ CLP) <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <span class="input-prefix">$</span>
+                <input type="number" id="cajero-amount" class="form-control input-with-prefix" min="1000" step="1000" placeholder="Ej: 50000" required>
+              </div>
+              <span id="cajero-amount-error" class="field-error" role="alert"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="cajero-desc" class="form-label">Descripción en Comprobante</label>
+              <input type="text" id="cajero-desc" class="form-control" placeholder="Ej: Depósito por ventanilla central" value="Operación en caja presencial">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="btn-submit-cajero">
+              <span>Procesar Operación de Ventanilla</span>
+            </button>
+          </form>
+        </article>
+
+        <!-- CONSULTA RÁPIDA DE CUENTA -->
+        <article class="card">
+          <h2 class="card-title">🔍 Consulta de Cuenta y Estado de Mora</h2>
+          <p class="card-subtitle">Verifique saldo en tiempo real y bloqueo por morosidad antes de efectuar operaciones.</p>
+
+          <div class="form-group">
+            <label for="cajero-lookup-select" class="form-label">Seleccionar Cuenta para Consultar</label>
+            <select id="cajero-lookup-select" class="form-control">
+              <!-- Se inyecta dinámicamente -->
+            </select>
+          </div>
+
+          <div id="cajero-lookup-result" class="lookup-result-box">
+            <div class="lookup-item">
+              <span>Titular:</span>
+              <strong id="lookup-titular">Isaias Arancibia</strong>
+            </div>
+            <div class="lookup-item">
+              <span>RUT:</span>
+              <strong id="lookup-rut">12.345.678-5</strong>
+            </div>
+            <div class="lookup-item">
+              <span>Tipo de Cuenta:</span>
+              <strong id="lookup-tipo">Cuenta Corriente</strong>
+            </div>
+            <div class="lookup-item">
+              <span>Saldo Real:</span>
+              <strong class="highlight-val" id="lookup-saldo">$ 1.450.000 CLP</strong>
+            </div>
+            <div class="lookup-item">
+              <span>Disponible Total:</span>
+              <strong class="highlight-val" id="lookup-disponible">$ 1.750.000 CLP</strong>
+            </div>
+            <div class="lookup-item">
+              <span>Estado Morosidad:</span>
+              <strong id="lookup-mora" class="text-success">Al Día (Sin Mora)</strong>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- PANTALLA 6: MÓDULO DE EJECUTIVO (EJECUTIVO / ADMIN) -->
+    <!-- ===================================================================== -->
+    <section id="view-ejecutivo" class="view-panel" aria-labelledby="ejecutivo-title" hidden>
+      <div class="dashboard-header">
+        <div>
+          <h1 id="ejecutivo-title" class="section-title">Gestión de Cuentas y Clientes (Ejecutivo)</h1>
+          <p class="section-subtitle">Apertura de productos mediante CuentaFactory, verificación de mora (P15) y alta de clientes.</p>
+        </div>
+        <div class="header-badge-wrap">
+          <span class="badge-role-ejecutivo">Ejecutivo de Cuentas Activo</span>
+        </div>
+      </div>
+
+      <div class="cards-grid">
+        <!-- APERTURA DE CUENTA BANCARIA -->
+        <article class="card">
+          <h2 class="card-title">📁 Apertura de Cuentas (Patrón Factory)</h2>
+          <p class="card-subtitle">Crea cuentas Corrientes, de Ahorro o Vista aplicando la regla bloqueante de mora (P15).</p>
+
+          <!-- AVISO DE MORA BLOQUEANTE -->
+          <div id="ejecutivo-mora-alert" class="alert alert-danger hidden" role="alert">
+            <span class="alert-icon">🚫</span>
+            <span id="ejecutivo-mora-alert-text"></span>
+          </div>
+
+          <form id="form-ejecutivo-open-account" class="form-flow" novalidate>
+            <div class="form-group">
+              <label for="ejecutivo-client-select" class="form-label">Cliente Titular <span class="required">*</span></label>
+              <select id="ejecutivo-client-select" class="form-control" required>
+                <!-- Clientes inyectados dinámicamente -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="ejecutivo-acc-type" class="form-label">Tipo de Cuenta a Crear <span class="required">*</span></label>
+              <select id="ejecutivo-acc-type" class="form-control" required>
+                <option value="CORRIENTE">Cuenta Corriente (Con sobregiro)</option>
+                <option value="AHORRO">Cuenta de Ahorro (Con tasa de interés y reajuste UF)</option>
+                <option value="VISTA">Cuenta Vista (Sin sobregiro ni interés)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="ejecutivo-initial-balance" class="form-label">Saldo Inicial ($ CLP) <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <span class="input-prefix">$</span>
+                <input type="number" id="ejecutivo-initial-balance" class="form-control input-with-prefix" min="0" value="50000" required>
+              </div>
+            </div>
+
+            <div class="form-group" id="group-overdraft">
+              <label for="ejecutivo-overdraft" class="form-label">Cupo de Sobregiro ($ CLP)</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">$</span>
+                <input type="number" id="ejecutivo-overdraft" class="form-control input-with-prefix" min="0" value="100000">
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="btn-submit-open-acc">
+              <span>Aperturar Cuenta Bancaria</span>
+            </button>
+          </form>
+        </article>
+
+        <!-- REGISTRO DE NUEVO CLIENTE -->
+        <article class="card">
+          <h2 class="card-title">👥 Registrar Nuevo Cliente</h2>
+          <p class="card-subtitle">Alta de titular con validación defensiva de RUT Módulo 11 y dirección mínima.</p>
+
+          <form id="form-ejecutivo-new-client" class="form-flow" novalidate>
+            <div class="form-group">
+              <label for="new-client-name" class="form-label">Nombre Completo <span class="required">*</span></label>
+              <input type="text" id="new-client-name" class="form-control" placeholder="Ej: Patricia Morales Castro" required>
+              <span id="new-client-name-error" class="field-error" role="alert"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="new-client-rut" class="form-label">RUT Oficial <span class="required">*</span></label>
+              <input type="text" id="new-client-rut" class="form-control" placeholder="Ej: 18.765.432-1" required>
+              <span id="new-client-rut-error" class="field-error" role="alert"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="new-client-address" class="form-label">Dirección Particular <span class="required">*</span></label>
+              <input type="text" id="new-client-address" class="form-control" placeholder="Ej: Av. Las Araucarias 543" required>
+              <span id="new-client-address-error" class="field-error" role="alert"></span>
+            </div>
+
+            <button type="submit" class="btn btn-outline btn-block" id="btn-submit-new-client">
+              <span>Guardar Cliente en Base de Datos</span>
+            </button>
+          </form>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- PANTALLA 7: PANEL DE ADMINISTRACIÓN GLOBAL Y PRUEBAS (ADMIN) -->
+    <!-- ===================================================================== -->
+    <section id="view-admin" class="view-panel" aria-labelledby="admin-title" hidden>
+      <div class="dashboard-header">
+        <div>
+          <h1 id="admin-title" class="section-title">Panel de Control y Pruebas Global (Administrador)</h1>
+          <p class="section-subtitle">Auditoría del sistema, control de morosidad y ejecutor web de las 19 pruebas oficiales.</p>
+        </div>
+        <div class="header-badge-wrap">
+          <span class="badge-role-admin">Superusuario Administrador</span>
+        </div>
+      </div>
+
+      <!-- TARJETAS DE MÉTRICAS -->
+      <div class="cards-grid">
+        <div class="admin-metric-card">
+          <span class="metric-icon">💰</span>
+          <div>
+            <span class="metric-label">Fondos Totales Custodiados</span>
+            <span class="metric-value" id="admin-total-funds">$ 2.425.000 CLP</span>
+          </div>
+        </div>
+        <div class="admin-metric-card">
+          <span class="metric-icon">👥</span>
+          <div>
+            <span class="metric-label">Clientes Registrados</span>
+            <span class="metric-value" id="admin-total-clients">3 Clientes</span>
+          </div>
+        </div>
+        <div class="admin-metric-card">
+          <span class="metric-icon">💳</span>
+          <div>
+            <span class="metric-label">Cuentas Bancarias Activas</span>
+            <span class="metric-value" id="admin-total-accounts">5 Cuentas</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BATERÍA DE PRUEBAS DOCENTE (P01 A P19) EJECUTABLE EN VIVO -->
+      <div class="table-card" style="margin-bottom: 2rem;">
+        <div class="table-header-bar">
+          <div>
+            <h2 class="table-title">🧪 Batería de Pruebas Docente Automatizada (P01 a P19)</h2>
+            <p class="table-subtitle">Ejecuta y verifica en tiempo real los 19 casos de prueba del guion oficial de evaluación.</p>
+          </div>
+          <div>
+            <button type="button" class="btn btn-primary" id="btn-run-web-tests">
+              <span class="btn-spinner hidden" id="tests-spinner"></span>
+              <span id="tests-btn-text">▶️ Ejecutar las 19 Pruebas</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="tests-results-container" class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">N°</th>
+                <th scope="col">Qué se prueba</th>
+                <th scope="col">Entrada / Condición</th>
+                <th scope="col">Resultado Esperado</th>
+                <th scope="col" class="text-right">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tests-tbody">
+              <!-- Resultados de pruebas inyectados aquí -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CONTROL Y SIMULADOR DE MORA (PARA PROBAR P15) -->
+      <div class="card">
+        <h2 class="card-title">⚙️ Simulador de Morosidad (Para Validar Regla P15)</h2>
+        <p class="card-subtitle">Active o desactive la mora de cualquier cliente para comprobar el bloqueo automático de apertura de cuentas y giros.</p>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Cliente</th>
+                <th scope="col">RUT</th>
+                <th scope="col">Monto Mora</th>
+                <th scope="col">Estado</th>
+                <th scope="col" class="text-right">Acción de Prueba</th>
+              </tr>
+            </thead>
+            <tbody id="admin-mora-tbody">
+              <!-- Clientes y mora inyectados aquí -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- PANTALLA 4: CONVERSIÓN DE DIVISAS (TODOS LOS ROLES) -->
     <!-- ===================================================================== -->
     <section id="view-currency" class="view-panel" aria-labelledby="currency-title" hidden>
       <div class="dashboard-header">
@@ -527,7 +883,6 @@
 
         <form id="form-converter" class="converter-flow" novalidate>
           <div class="converter-grid">
-            <!-- MONTO ORIGEN -->
             <div class="form-group">
               <label for="converter-amount" class="form-label" id="converter-amount-label">
                 Monto en Pesos Chilenos ($ CLP)
@@ -549,20 +904,18 @@
               <span id="converter-amount-error" class="field-error" role="alert" aria-live="polite"></span>
             </div>
 
-            <!-- BOTÓN DE INVERSIÓN DE SENTIDO -->
             <div class="converter-swap-wrapper">
               <button
                 type="button"
                 id="btn-swap-currency"
                 class="btn-swap"
-                aria-label="Invertir dirección de conversión (CLP a USD o USD a CLP)"
+                aria-label="Invertir dirección de conversión"
                 title="Invertir monedas"
               >
                 ⇄
               </button>
             </div>
 
-            <!-- RESULTADO OBTENIDO -->
             <div class="form-group">
               <label class="form-label" id="converter-result-label">Monto Equivalente en Dólares (USD)</label>
               <div class="converter-result-box" aria-live="polite">
@@ -571,7 +924,6 @@
             </div>
           </div>
 
-          <!-- DESGLOSE DE TASA -->
           <div class="converter-breakdown">
             <div class="breakdown-item">
               <span>Tasa de cambio aplicada:</span>
@@ -589,15 +941,15 @@
   </main>
 
   <!-- ======================================================================= -->
-  <!-- MODAL DE CONFIRMACIÓN DE TRANSFERENCIA (ACCESIBLE Y NAVEGABLE) -->
+  <!-- MODAL DE CONFIRMACIÓN DE TRANSFERENCIA -->
   <!-- ======================================================================= -->
-  <div id="modal-confirm" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-confirm-title" aria-describedby="modal-confirm-desc">
+  <div id="modal-confirm" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-confirm-title">
     <div class="modal-card">
       <div class="modal-header">
         <div class="modal-icon" aria-hidden="true">🔒</div>
         <div>
           <h2 id="modal-confirm-title" class="modal-title">Confirmar Transferencia</h2>
-          <p id="modal-confirm-desc" class="modal-subtitle">Por favor revise los datos antes de autorizar el débito de su cuenta.</p>
+          <p id="modal-confirm-desc" class="modal-subtitle">Revise los datos antes de autorizar el débito de su cuenta.</p>
         </div>
       </div>
 
@@ -635,9 +987,7 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline" id="btn-modal-cancel">
-          Modificar Datos
-        </button>
+        <button type="button" class="btn btn-outline" id="btn-modal-cancel">Modificar Datos</button>
         <button type="button" class="btn btn-primary" id="btn-modal-confirm">
           <span class="btn-spinner hidden" id="modal-spinner" aria-hidden="true"></span>
           <span id="modal-btn-text">Autorizar y Transferir</span>
@@ -653,13 +1003,13 @@
     <div class="modal-card receipt-card">
       <div class="receipt-header">
         <div class="receipt-success-icon" aria-hidden="true">✓</div>
-        <h2 id="receipt-title" class="receipt-title">¡Transferencia Realizada con Éxito!</h2>
+        <h2 id="receipt-title" class="receipt-title">¡Operación Realizada con Éxito!</h2>
         <p class="receipt-subtitle">Comprobante de operación electrónica</p>
       </div>
 
       <div class="receipt-body">
         <div class="receipt-amount-display">
-          <span class="receipt-amount-label">Monto Transferido</span>
+          <span class="receipt-amount-label">Monto de la Operación</span>
           <span class="receipt-amount-val" id="receipt-amount">$ 0 CLP</span>
         </div>
 
@@ -673,15 +1023,11 @@
             <strong id="receipt-datetime">-</strong>
           </div>
           <div class="receipt-item">
-            <span>Destinatario:</span>
+            <span>Beneficiario / Cuenta:</span>
             <strong id="receipt-dest-name">-</strong>
           </div>
           <div class="receipt-item">
-            <span>RUT Destinatario:</span>
-            <strong id="receipt-dest-rut">-</strong>
-          </div>
-          <div class="receipt-item">
-            <span>Banco Destino:</span>
+            <span>Detalle:</span>
             <strong id="receipt-bank">-</strong>
           </div>
           <div class="receipt-item">
@@ -693,13 +1039,13 @@
 
       <div class="receipt-footer">
         <button type="button" class="btn btn-primary btn-block" id="btn-receipt-close">
-          Ir al Resumen de Movimientos
+          Continuar
         </button>
       </div>
     </div>
   </div>
 
-  <!-- TOAST NOTIFICACIÓN GLOBAL (Flotante) -->
+  <!-- TOAST NOTIFICACIÓN GLOBAL -->
   <div id="toast-notification" class="toast hidden" role="status" aria-live="polite">
     <span class="toast-icon" id="toast-icon" aria-hidden="true">ℹ️</span>
     <span class="toast-message" id="toast-text">Mensaje</span>
@@ -709,7 +1055,7 @@
   <footer class="app-footer" role="contentinfo">
     <div class="footer-container">
       <p class="footer-text">
-        <strong>SouthPark Bank</strong> &copy; 2026. Plataforma demostrativa desarrollada para el ramo de
+        <strong>SouthPark Bank</strong> &copy; 2026. Plataforma Multi-Rol para
         <em>Programación Orientada a Objeto Seguro (TI3V21)</em>.
       </p>
       <div class="footer-security-badge" aria-label="Seguridad del sitio">

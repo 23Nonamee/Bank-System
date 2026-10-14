@@ -1342,3 +1342,211 @@ body {
     text-align: center;
   }
 }
+
+/* ==========================================================================
+   ESTILOS MULTI-ROL (CLIENTE, CAJERO, EJECUTIVO, ADMIN)
+   ========================================================================== */
+
+.user-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.role-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+
+.badge-role-cliente {
+  background-color: #0284c7;
+  color: #ffffff;
+}
+
+.badge-role-cajero {
+  background-color: #10b981;
+  color: #ffffff;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.badge-role-ejecutivo {
+  background-color: #8b5cf6;
+  color: #ffffff;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.badge-role-admin {
+  background-color: #f59e0b;
+  color: #000000;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 800;
+}
+
+/* Selector Rápido de Roles Demo en Login */
+.demo-role-selector {
+  margin-bottom: 1.5rem;
+}
+
+.demo-selector-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.demo-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+}
+
+.btn-demo-role {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.5rem 0.25rem;
+  background-color: #f8fafc;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-demo-role:hover {
+  background-color: #e0f2fe;
+  border-color: var(--color-accent);
+}
+
+.btn-demo-role.active {
+  background-color: #0c2340;
+  color: #ffffff;
+  border-color: #0c2340;
+}
+
+.btn-demo-role .role-icon {
+  font-size: 1.15rem;
+}
+
+.btn-demo-role .role-txt {
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.demo-roles-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+/* Métricas Admin */
+.admin-metric-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.metric-icon {
+  font-size: 2.2rem;
+}
+
+.metric-label {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metric-value {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+/* Caja y Consulta Cajero */
+.lookup-result-box {
+  background-color: #f8fafc;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.lookup-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+  padding-bottom: 0.4rem;
+}
+
+.lookup-item span {
+  color: var(--color-text-muted);
+}
+
+.highlight-val {
+  color: var(--color-primary);
+  font-weight: 700;
+  font-family: monospace;
+}
+
+/* Pruebas Docente en Web */
+.badge-test-pass {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+  border: 1px solid var(--color-success-border);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.btn-toggle-mora {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.btn-toggle-mora.is-active {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+  border-color: var(--color-danger-border);
+}
+
+.btn-toggle-mora.is-clear {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+  border-color: var(--color-success-border);
+}
+
