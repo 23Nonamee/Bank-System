@@ -34,11 +34,20 @@ class CuentaAhorro(Cuenta):
 
     def reajustarInteres(self, valor_uf: float) -> float:
         """
-        Reajusta el interés abonado según la variación de la UF (método del diagrama UML).
+        Reajusta el interés abonado según la variación de la UF (método del diagrama UML y prueba P16).
         """
         if valor_uf <= 0:
             raise ValueError("El valor de la UF debe ser un monto positivo.")
         reajuste = (self._saldo / valor_uf) * self._tasa_interes
+        return reajuste
+
+    def reajustarInteresDolar(self, valor_dolar: float) -> float:
+        """
+        Reajusta el interés o saldo según el valor del Dólar Observado (USD) del día.
+        """
+        if valor_dolar <= 0:
+            raise ValueError("El valor del dólar debe ser un monto positivo.")
+        reajuste = (self._saldo / valor_dolar) * self._tasa_interes
         return reajuste
 
     def __str__(self) -> str:

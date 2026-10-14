@@ -61,6 +61,7 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+*.db
 
 # Flask stuff:
 instance/
@@ -188,7 +189,7 @@ cython_debug/
 #   be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
 #   and can be added to the global gitignore or merged into this file.  For a more nuclear
 #   option (not recommended) you can uncomment the following to ignore the entire idea folder.
-# .idea/
+.idea/
 
 # Abstra
 #   Abstra is an AI-powered process automation framework.
@@ -197,11 +198,7 @@ cython_debug/
 .abstra/
 
 # Visual Studio Code
-#   Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore that
-#   can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
-#   and can be added to the global gitignore or merged into this file. However, if you prefer, you
-#   could uncomment the following to ignore the entire vscode folder
-# .vscode/
+.vscode/
 # Temporary file for partial code execution
 tempCodeRunnerFile.py
 
@@ -218,3 +215,46 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ==============================================================================
+# ARCHIVOS Y DOCUMENTOS TEMPORALES / BASURA (Junk & Temporary Documents)
+# ==============================================================================
+# Archivos temporales y de bloqueo de editores / Office / LibreOffice
+.~lock.*
+~$*
+*.tmp
+*.temp
+*.bak
+*.old
+*.swp
+*.swo
+*~
+
+# Archivos del sistema operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# Bases de datos y archivos de journaling / WAL
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.sqlite3-journal
+
+# Logs y volcados de depuración
+*.log
+*.dmp
+*.stackdump
+crash_dumps/
+
+# Bitácoras de desarrollo personal / local
+BITACORA.md
+[Bb]itacora*.md

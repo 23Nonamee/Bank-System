@@ -1,6 +1,6 @@
 """
 Excepciones personalizadas del dominio bancario.
-Requisito Rúbrica 2.1.4: Manejo de errores y excepciones del negocio.
+Requisito Rúbrica: Manejo de errores y excepciones del negocio.
 """
 
 class DomainError(Exception):
@@ -29,7 +29,7 @@ class SaldoInsuficienteError(DomainError):
 
 
 class ClienteEnMoraError(DomainError):
-    """Lanzada cuando un cliente intenta realizar una operación restringida teniendo mora vigente."""
+    """Lanzada cuando un cliente intenta realizar una operación restringida (apertura o giro) teniendo mora vigente."""
     def __init__(self, cliente_nombre: str, monto_mora: int):
         self.cliente_nombre = cliente_nombre
         self.monto_mora = monto_mora
@@ -38,3 +38,34 @@ class ClienteEnMoraError(DomainError):
             f"de ${monto_mora:,.0f}."
         )
         super().__init__(self.mensaje)
+
+
+class MontoInvalidoError(DomainError):
+    """Lanzada cuando un monto ingresado no es válido (<= 0 o no numérico)."""
+    def __init__(self, mensaje: str = "El monto debe ser un valor numérico positivo mayor a cero."):
+        self.mensaje = mensaje
+        super().__init__(self.mensaje)
+
+
+class EntidadNoEncontradaError(DomainError):
+    """Lanzada cuando una entidad (Cliente, Cuenta, Transacción) no es encontrada en la base de datos."""
+    def __init__(self, entidad: str, identificador: str):
+        self.entidad = entidad
+        self.identificador = identificador
+        self.mensaje = f"No se encontró {entidad} con identificador '{identificador}'."
+        super().__init__(self.mensaje)
+
+
+class ApiIndicadorError(DomainError):
+    """Excepción base para fallos al consultar la API externa de indicadores económicos."""
+    pass
+
+
+class ApiTimeoutError(ApiIndicadorError):
+    """Lanzada cuando la solicitud a la API excede el tiempo de espera configurado."""
+    pass
+
+
+class ApiConexionError(ApiIndicadorError):
+    """Lanzada cuando no es posible establecer conexión con el servicio externo (sin internet/red caída)."""
+    pass

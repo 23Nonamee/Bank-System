@@ -11,10 +11,13 @@ class Cliente:
     Relaciones UML:
     - Agregación con Cuenta: Cliente agrupa Cuentas asociadas.
     - Composición/Asociación con Rut y Mora.
+    - Atributo dirección agregado para soportar actualización de cliente (Prueba P04).
     """
-    def __init__(self, nombre: str, rut: Rut, mora: Mora = None):
+    def __init__(self, nombre: str, rut: Rut, direccion: str = "Sin Dirección", mora: Mora = None):
         self._nombre = None
+        self._direccion = None
         self.nombre = nombre  # Setter con validación
+        self.direccion = direccion  # Setter con validación
         self._rut_cliente = rut if isinstance(rut, Rut) else Rut(rut)
         self._mora_cliente = mora if isinstance(mora, Mora) else Mora()
         self._cuentas_asociadas: List['Cuenta'] = []
@@ -28,6 +31,16 @@ class Cliente:
         if not valor or not isinstance(valor, str) or len(valor.strip()) < 2:
             raise ValueError("El nombre del cliente debe ser un texto válido con al menos 2 caracteres.")
         self._nombre = valor.strip()
+
+    @property
+    def direccion(self) -> str:
+        return self._direccion
+
+    @direccion.setter
+    def direccion(self, valor: str) -> None:
+        if not valor or not isinstance(valor, str) or len(valor.strip()) < 2:
+            raise ValueError("La dirección del cliente debe ser un texto válido con al menos 2 caracteres.")
+        self._direccion = valor.strip()
 
     @property
     def rut_cliente(self) -> Rut:
@@ -54,7 +67,7 @@ class Cliente:
 
     def __str__(self) -> str:
         mora_str = f" [MORA: ${self._mora_cliente.amount_mora:,.0f}]" if self.tieneMoraVigente() else ""
-        return f"Cliente: {self._nombre} | RUT: {self._rut_cliente.getFormatedRut()}{mora_str}"
+        return f"Cliente: {self._nombre} | RUT: {self._rut_cliente.getFormatedRut()} | Dirección: {self._direccion}{mora_str}"
 
     def __repr__(self) -> str:
-        return f"Cliente(nombre='{self._nombre}', rut='{self._rut_cliente.getFormatedRut()}')"
+        return f"Cliente(nombre='{self._nombre}', rut='{self._rut_cliente.getFormatedRut()}', direccion='{self._direccion}')"

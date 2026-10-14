@@ -8,9 +8,10 @@ class TipoCuenta(Enum):
 
 
 class TipoMovimiento(Enum):
-    """Tipos de movimientos bancarios."""
+    """Tipos de movimientos bancarios segun diagrama UML y guion de pruebas."""
     DEPOSITO = "DEPOSITO"
     GIRO = "GIRO"
+    CARGO = "CARGO"
     TRANSFERENCIA = "TRANSFERENCIA"
 
 
